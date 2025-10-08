@@ -1,6 +1,6 @@
 import json
 from interfaces import StorageInterface, OutputInterface
-from entities import SportsEquipmentFactory
+from models.equipment import SportsEquipmentFactory
 
 
 class CommandExecutor:

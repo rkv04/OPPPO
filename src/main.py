@@ -1,6 +1,6 @@
-from storage import SportsEquipmentStorage
-from output import ConsoleOutput
-from command_executor import CommandExecutor
+from implementations.memory_storage import SportsEquipmentStorage
+from implementations.console_output import ConsoleOutput
+from core.command_executor import CommandExecutor
 
 
 def main():
