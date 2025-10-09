@@ -1,4 +1,4 @@
-from interfaces import OutputInterface
+from interfaces.output import OutputInterface
 
 
 class ConsoleOutput(OutputInterface):

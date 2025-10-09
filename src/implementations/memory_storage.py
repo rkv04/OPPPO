@@ -1,5 +1,5 @@
-from interfaces import StorageInterface
-from entities.equipment import SportsEquipment
+from interfaces.storage import StorageInterface
+from models.equipment import SportsEquipment
 
 
 class SportsEquipmentStorage(StorageInterface):
