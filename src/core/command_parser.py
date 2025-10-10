@@ -1,4 +1,5 @@
 from json import loads as json_loads, JSONDecodeError
+from exceptions.exceptions import CommandParseError
 
 
 class CommandParser:
@@ -15,4 +16,4 @@ class CommandParser:
             data = json_loads(command_parts[1])
             return command_mnemonic, data
         except JSONDecodeError as e:
-            raise ValueError ("Ошибка в структуре JSON объекта") from e
+            raise CommandParseError("Ошибка в структуре JSON объекта") from e

@@ -1,8 +1,11 @@
+from utils.validators import Validator
+from exceptions.exceptions import ValidationError
 
 
-class SportsEquipment:
-    def __init__(self, manufacturer: str, price: int):
+class SportsEquipment():
+    def __init__(self, equipment_type: str, manufacturer: str, price: int):
         self.__validate_data(price)
+        self._equipment_type = equipment_type
         self._manufacturer = manufacturer
         self._price = price
 
@@ -10,20 +13,17 @@ class SportsEquipment:
         self.__validate_price(price)
 
     def __validate_price(self, price):
-        if isinstance(price, int) and price >= 0:
+        if Validator.validate_positive_integer(price):
             return
-        raise ValueError('цена должна быть целым неотрицательным числом')
+        raise ValidationError('Цена должна быть целым неотрицательным числом')
 
     def to_dict(self):
         pass
 
 
 class SoccerBall(SportsEquipment):
-
-    NUMBER_OF_FIELDS = 5
-
-    def __init__(self, manufacturer: str, price: int, size: int, material: str):
-        super().__init__(manufacturer, price)
+    def __init__(self, equipment_type: str, manufacturer: str, price: int, size: int, material: str):
+        super().__init__(equipment_type, manufacturer, price)
         self.__validate_data(size)
         self.__size = size
         self.__material = material
@@ -37,18 +37,19 @@ class SoccerBall(SportsEquipment):
 
     @staticmethod
     def from_dict(data: dict):
-        try:
-            return SoccerBall(
-                manufacturer = data['manufacturer'],
-                price = data['price'],
-                size = data['size'],
-                material = data['material']
-            )
-        except KeyError as e:
-            raise ValueError(f"требуется поле {e}")
+        required = {"equipment_type", "manufacturer", "price", "size", "material"}
+        Validator.validate_required_fields(data, required)
+        return SoccerBall(
+            equipment_type = data["equipment_type"],
+            manufacturer = data['manufacturer'],
+            price = data['price'],
+            size = data['size'],
+            material = data['material']
+        )
     
     def to_dict(self):
         return {
+            "equipment_type": self._equipment_type,
             "manufacturer": self._manufacturer,
             "price": self._price,
             "size": self.__size,
@@ -56,37 +57,33 @@ class SoccerBall(SportsEquipment):
         }
 
     def __validate_data(self, size: int):
-        if isinstance(size, int) and size >= 0:
+        if Validator.validate_positive_integer(size):
             return
-        raise ValueError('размер должен быть целым неотрицательным числом')
+        raise ValidationError('Размер должен быть целым неотрицательным числом')
         
 
 class TennisRacket(SportsEquipment):
-
-    NUMBER_OF_FIELDS = 5
-
-    def __init__(self, manufacturer: str, price: int, weight: int, head_size: int):
-        super().__init__(manufacturer, price)
+    def __init__(self, equipment_type: str, manufacturer: str, price: int, weight: int, head_size: int):
+        super().__init__(equipment_type, manufacturer, price)
         self.__validate_data(weight, head_size)
         self.__weight = weight
         self.__head_size = head_size
 
     @staticmethod
     def from_dict(data: dict):
-        if len(data) > TennisRacket.NUMBER_OF_FIELDS:
-            raise ValueError(f'слишком много полей у объекта (требуется {Bicycle.NUMBER_OF_FIELDS})')
-        try:
-            return TennisRacket(
+        required = {"equipment_type", "manufacturer", "price", "weight", "head_size"}
+        Validator.validate_required_fields(data, required)
+        return TennisRacket(
+                equipment_type = data["equipment_type"],
                 manufacturer = data['manufacturer'],
                 price = data['price'],
                 weight = data['weight'],
                 head_size = data['head_size']
             )
-        except KeyError as e:
-            raise ValueError(f"требуется поле {e}")
         
     def to_dict(self):
         return {
+            "equipment_type": self._equipment_type,
             "manufacturer": self._manufacturer,
             "price": self._price,
             "weight": self.__weight,
@@ -105,23 +102,20 @@ class TennisRacket(SportsEquipment):
         self.__validate_weight(weight)
 
     def __validate_weight(self, weight):
-        if isinstance(weight, float) and weight >= 0:
+        if Validator.validate_non_negative(weight):
             return
-        raise ValueError('вес должен быть неотрицательным числом')
+        raise ValidationError('Вес должен быть неотрицательным числом')
 
     def __validate__head_size(self, head_size):
-        if isinstance(head_size, int) and head_size >= 0:
+        if Validator.validate_positive_integer(head_size):
             return
-        raise ValueError('размер ракетки должен быть целым неотрицательным числом')
+        raise ValidationError('Размер ракетки должен быть целым неотрицательным числом')
 
 
 
 class Bicycle(SportsEquipment):
-
-    NUMBER_OF_FIELDS = 5
-
-    def __init__(self, manufacturer: str, price: int, type: str, number_of_speeds: int):
-        super().__init__(manufacturer, price)
+    def __init__(self, equipment_type: str, manufacturer: str, price: int, type: str, number_of_speeds: int):
+        super().__init__(equipment_type, manufacturer, price)
         self.__validate_data(number_of_speeds)
         self.__type = type
         self.__number_of_speeds = number_of_speeds
@@ -135,20 +129,19 @@ class Bicycle(SportsEquipment):
 
     @staticmethod
     def from_dict(data: dict):
-        if len(data) > Bicycle.NUMBER_OF_FIELDS:
-            raise ValueError(f'слишком много полей у объекта (требуется {Bicycle.NUMBER_OF_FIELDS})')
-        try:
-            return Bicycle(
+        required = {"equipment_type", "manufacturer", "price", "type", "number_of_speeds"}
+        Validator.validate_required_fields(data, required)
+        return Bicycle(
+            equipment_type = data["equipment_type"],
             manufacturer = data['manufacturer'],
             price = data['price'],
             type = data['type'],
             number_of_speeds = data['number_of_speeds']
         )
-        except KeyError as e:
-            raise ValueError(f"требуется поле '{e}'")
         
     def to_dict(self):
         return {
+            "equipment_type": self._equipment_type,
             "manufacturer": self._manufacturer,
             "price": self._price,
             "type": self.__type,
@@ -159,23 +152,27 @@ class Bicycle(SportsEquipment):
         self.__validate_number_of_speeds(number_of_speeds)
 
     def __validate_number_of_speeds(self, number_of_speeds):
-        if isinstance(number_of_speeds, int) and number_of_speeds >= 0:
+        if Validator.validate_positive_integer(number_of_speeds):
             return
-        raise ValueError('число скоростей должно быть целым неотрицательным числом')
+        raise ValidationError('Число скоростей должно быть целым неотрицательным числом')
 
 
 class SportsEquipmentFactory:
+
+    __equipment_type_mapping = {
+        "bicycle": Bicycle,
+        "soccerBall": SoccerBall,
+        "tennisRacket": TennisRacket
+    }
+
     @staticmethod
     def create_from_dict(data: dict):
-        equipment_type = data.get('equipment_type', None)
+        allowed_equipment_types = ["bicycle", "soccerBall", "tennisRacket"]
+        equipment_type = data.get('equipment_type')
         if not equipment_type:
-            raise ValueError("поле 'equipment_type' является обязательным для каждого объекта")
-        if equipment_type == 'bicycle':
-            return Bicycle.from_dict(data)
-        elif equipment_type == 'soccerBall':
-            return SoccerBall.from_dict(data)
-        elif equipment_type == 'tennisRacket':
-            return TennisRacket.from_dict(data)
-        else:
-            raise ValueError(f"поле 'equipment_type' может иметь значения: ['bicycle', 'soccerBall', 'tennisRacket']")
-        
+            raise ValidationError("Поле 'equipment_type' является обязательным для каждого объекта")
+        cls = SportsEquipmentFactory.__equipment_type_mapping.get(equipment_type)
+        if not cls:
+            raise ValidationError(f"Поле 'equipment_type' может принимать значения: {allowed_equipment_types}")
+        return cls.from_dict(data)
+    

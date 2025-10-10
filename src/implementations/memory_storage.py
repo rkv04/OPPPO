@@ -1,10 +1,15 @@
 from interfaces.storage import StorageInterface
-from models.equipment import SportsEquipment
+from entities.equipment import SportsEquipment
 
 
 class SportsEquipmentStorage(StorageInterface):
     def __init__(self):
         self.__equipments = []
+        self.__comparison_functions = {
+            "==": lambda a, b: a == b,
+            ">": lambda a, b: a > b,
+            "<": lambda a, b: a < b
+        }
 
     def push_back(self, equipment: SportsEquipment):
         self.__equipments.append(equipment)
@@ -13,8 +18,6 @@ class SportsEquipmentStorage(StorageInterface):
         return self.__equipments
     
     def remove_where(self, condition: dict):
-        if condition['attribute'] not in ['price', 'manufacturer']:
-            raise ValueError(f'поле "attribute" может принимать значения ["price", "manufacturer"]')
         for idx, equipment in enumerate(self.__equipments):
             if (self.__is_condition_true(equipment, condition)):
                 self.__equipments.pop(idx)
@@ -23,13 +26,6 @@ class SportsEquipmentStorage(StorageInterface):
         operator = condition['operator']
         target_value = condition['target_value']
         attribute = condition['attribute']
-        equipment_dict = equipment.to_dict()
-        if operator == '==':
-            return equipment_dict[attribute] == target_value
-        elif operator == '>':
-            return equipment_dict[attribute] > target_value
-        elif operator == '<':
-            return equipment_dict[attribute] < target_value
-        else:
-            raise ValueError(f'неподдерживаемый оператор {operator}')
+        equipment_value = equipment.to_dict()[attribute]
+        return self.__comparison_functions[operator](equipment_value, target_value)
         
