@@ -23,9 +23,9 @@ class SportsEquipmentStorage(StorageInterface):
                 self.__equipments.pop(idx)
 
     def __is_condition_true(self, equipment, condition: dict):
-        operator = condition['operator']
-        target_value = condition['target_value']
-        attribute = condition['attribute']
+        operator = condition["operator"]
+        target_value = condition["target_value"]
+        attribute = condition["attribute"]
         equipment_value = equipment.to_dict()[attribute]
         return self.__comparison_functions[operator](equipment_value, target_value)
         

@@ -30,6 +30,9 @@ class CommandExecutor:
             self.__out.write(f"Файл {path_to_command_file} не найден\n")
         except IOError as e:
             self.__out.write(f"Ошибка чтения файла: {e}")
+
+    def execute_line(self, command_line: str, line_num: int = 1):
+        self.__process_line(command_line, line_num)
                 
     def __process_line(self, command_line: str, line_num: int):
         try:

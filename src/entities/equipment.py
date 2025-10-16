@@ -176,3 +176,4 @@ class SportsEquipmentFactory:
             raise ValidationError(f"Поле 'equipment_type' может принимать значения: {allowed_equipment_types}")
         return cls.from_dict(data)
     
+    
